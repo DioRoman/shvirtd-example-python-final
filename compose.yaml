@@ -1,3 +1,5 @@
+include:
+  proxy.yaml
 services:
   web:
     build:
@@ -21,18 +23,3 @@ services:
       - db
     env_file:
       - .env
-      
-  db:
-    image: mysql:8
-    container_name: dio-mysql
-    restart: on-failure
-    networks:
-      backend:
-        ipv4_address: 172.20.0.10
-    ports:
-      - 3306:3306
-    env_file:
-      - .env
-    depends_on:
-      - reverse-proxy
-      - ingress-proxy
