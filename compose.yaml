@@ -1,0 +1,38 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    container_name: dio-web
+    restart: on-failure
+    environment:
+      - DB_HOST=db
+      - DB_USER=${MYSQL_USER}
+      - DB_PASSWORD=${MYSQL_PASSWORD}
+      - DB_NAME=${MYSQL_DATABASE}
+    networks:
+      backend:
+        ipv4_address: 172.20.0.5
+    ports:
+      - 5000:5000
+    depends_on:
+      - reverse-proxy
+      - ingress-proxy
+      - db
+    env_file:
+      - .env
+      
+  db:
+    image: mysql:8
+    container_name: dio-mysql
+    restart: on-failure
+    networks:
+      backend:
+        ipv4_address: 172.20.0.10
+    ports:
+      - 3306:3306
+    env_file:
+      - .env
+    depends_on:
+      - reverse-proxy
+      - ingress-proxy

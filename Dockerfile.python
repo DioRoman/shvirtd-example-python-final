@@ -1,0 +1,15 @@
+# Этап 1: сборка и установка зависимостей
+FROM python:3.9-slim AS builder
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --upgrade pip setuptools wheel
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+
+# Этап 2: финальный легкий образ для запуска
+FROM python:3.9-slim
+WORKDIR /app
+COPY --from=builder /usr/local/lib/python3.9/site-packages /usr/local/lib/python3.9/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
+COPY --from=builder /app .
+CMD ["python", "main.py"]
